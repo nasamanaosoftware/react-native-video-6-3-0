@@ -17,6 +17,10 @@ import com.brentvatne.common.toolbox.DebugLog;
 
 import java.lang.ref.WeakReference;
 
+import android.content.ContextWrapper;
+import android.content.pm.ActivityInfo;
+import android.app.Activity;
+
 @SuppressLint("PrivateResource")
 public class FullScreenPlayerView extends Dialog {
     private final LegacyPlayerControlView playerControlView;
@@ -74,6 +78,7 @@ public class FullScreenPlayerView extends Dialog {
 
     @Override
     public void onBackPressed() {
+        getActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         super.onBackPressed();
         onBackPressedCallback.handleOnBackPressed();
     }
@@ -132,5 +137,14 @@ public class FullScreenPlayerView extends Dialog {
         );
         layoutParams.setMargins(0, 0, 0, 0);
         return layoutParams;
+    }
+
+    private Activity getActivity(Context context) {
+        if (context instanceof Activity) {
+            return (Activity) context;
+        } else if (context instanceof ContextWrapper) {
+            return getActivity(((ContextWrapper) context).getBaseContext());
+        }
+        return null;
     }
 }
